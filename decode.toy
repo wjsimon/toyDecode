@@ -1,0 +1,69 @@
+program decode
+// Input:    
+// Output:   
+// Remarks:  
+// -----------------------------------------------------------------------------
+00: 0000 0
+01: 0001 1
+
+//if A is FFFF, then A + F = 0, go to halt
+10: 8F01
+11: 8AFF read to A from StdIn
+12: 12AF 2 = A + F
+13: C238 if(2 == 0) go to 38
+
+//read remaining entries 7-tuple
+14: 8BFF
+15: 8CFF
+16: 8DFF
+17: 83FF
+18: 84FF
+19: 85FF
+
+//calc p1, p2, p3; check if p1 = R3, p2 = R4, p3 = R5
+//A ^ B ^ D = p1(r3)
+1A: 46AB
+1B: 466D
+1C: 4663
+////A ^ C ^ D = p2(r4)
+1D: 47AC
+1E: 477D
+1F: 4774
+////B ^ C ^ D = p3(r5)
+20: 48BC
+21: 488D
+22: 4885
+//calculate check fails k1, k2, k3
+23: 3367 3 = 6 && 7
+24: 3468 4 = 6 && 8
+25: 3578 5 = 7 && 8
+//calculate check fail k4 (all fail)
+26: 3634 6 = 3 && 4
+27: 3665 6 = 6 && 5
+
+//turn bits if wrong
+//case 1: all wrong
+28: C62B if(6 == 0) go to 2B
+29: 4DDF D = D ^ F
+2A: C033 if (R0 = 0) go to 33
+//case 2: 1 and 2 wrong
+2B: C32E if(3 == 0) go to 2E
+2C: 4AAF A = A ^ F
+2D: C033 if(R0 = 0) go to 33
+
+2E: C431 if(4 == 0) go to 31
+2F: 4BBF B = B ^ F
+30: C033 if (R0 = 0) go to 33
+
+31: C533 if(5 == 0) go to 33
+32: 4CCF C = C ^ F
+
+//output corrected input m1-m4; for 7.txt StdOut should be 1101
+33: 9AFF
+34: 9BFF
+35: 9CFF
+36: 9DFF
+
+37: C011 if(R0 = 0) go to 11
+
+38: 0000
